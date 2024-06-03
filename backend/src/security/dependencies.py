@@ -12,20 +12,22 @@ from backend.src.exceptions import (
 def get_token(request: Request):
     token = request.cookies.get("carwash_access_token")
     if not token:
-        raise TokenAbsentException
+        return None
     return token
 
 
 async def get_user_id_from_token(token: str = Depends(get_token)) -> int:
+    if token is None:
+        return None
     try:
         payload = jwt.decode(
             token, settings.SECRET_KEY, settings.ALGORITHM
         )
     except JWTError:
-        raise IncorrectTokenFormatException
+        return None
     user_id: str = payload.get("sub")
     if not user_id:
-        raise UserIsNotPresentException
+        return None
     return int(user_id)
 
 

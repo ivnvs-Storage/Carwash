@@ -13,5 +13,5 @@ export const Booking: React.FC = () => {
       <BookingContent />
       <PageFooter />
     </Layout>
-  );
-};
+  )
+}

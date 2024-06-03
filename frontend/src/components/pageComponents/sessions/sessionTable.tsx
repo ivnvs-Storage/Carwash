@@ -1,44 +1,71 @@
-import React from 'react';
-import { Space, Table, Tag } from 'antd';
-import type { TableProps } from 'antd';
+import React, { useEffect, useState } from 'react'
+import { Space, Table, Tag } from 'antd'
+import type { TableProps } from 'antd'
+import axios from "axios"
 
 interface DataType {
-  key: string;
-  name: string;
-  age: number;
-  address: string;
-  tags: string[];
+  id: number
+  box_id: number
+  number: string
+  payed: boolean
+  cost: number
+  start_time: string
+  end_time: string
+}
+
+interface TSession {
+  id: number
+  box_id: number
+  number: string
+  payed: boolean
+  cost: number
+  start_time: string
+  end_time: string
+}
+
+
+
+export const SessionTable: React.FC = () => {
+
+const [sessions, setSessions] = useState<TSession[]>([])
+
+const moveToPay = () => {
+  window.location.assign('http://localhost:5173/pay')
 }
 
 const columns: TableProps<DataType>['columns'] = [
   {
     title: 'Номер автомобиля',
-    dataIndex: 'name',
-    key: 'name',
-    render: (text) => <a>{text}</a>,
+    dataIndex: 'number',
+    key: 'number',
+    render: (text) => <p>{text}</p>,
   },
   {
     title: 'Дата',
-    dataIndex: 'age',
-    key: 'age',
+    dataIndex: 'start_time',
+    key: 'start_time',
+    render: (text) => <p>{format_date(text)}</p>,
+  },
+  {
+    title: 'Цена',
+    dataIndex: 'cost',
+    key: 'cost',
+    render: (text) => <p>{text}</p>,
   },
   {
     title: 'Статус',
-    key: 'tags',
-    dataIndex: 'tags',
-    render: (_, { tags }) => (
+    key: 'payed',
+    dataIndex: 'payed',
+    render: (_, record) => (
       <>
-        {tags.map((tag) => {
-          let color = tag.length > 5 ? 'geekblue' : 'green';
-          if (tag === 'loser') {
-            color = 'volcano';
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag.toUpperCase()}
+          {record.payed 
+          ? <Tag color={'green'}>
+              Оплачено
             </Tag>
-          );
-        })}
+          : <Tag color={'volcano'}>
+              Не оплачено
+            </Tag>
+            }
       </>
     ),
   },
@@ -46,141 +73,37 @@ const columns: TableProps<DataType>['columns'] = [
     title: 'Оплатить',
     key: 'action',
     render: (_, record) => (
-      <Space size="middle">
-        <a>Invite {record.name}</a>
-        <a>Delete</a>
-      </Space>
-    ),
-  },
-];
+      <>
+      {record.payed
+        ? <></>
+        : <>
+          {record.cost
+          ?<Space size="middle">
+            <a onClick={moveToPay}>Оплатить</a>
+           </Space>
+          : <></>} 
+          </>
+      }
+      </>
+    )
+  }
+]
 
-const data: DataType[] = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sydney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
-  },
-  {
-    key: '4',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
-  },
-  {
-    key: '5',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
-  },
-  {
-    key: '6',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sydney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
-  },
-  {
-    key: '7',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
-  },
-  {
-    key: '8',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
-  },
-  {
-    key: '9',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sydney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
-  },
-  {
-    key: '10',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
-  },
-  {
-    key: '11',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
-  },
-  {
-    key: '12',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sydney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
-  },
-  {
-    key: '13',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
-  },
-  {
-    key: '14',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
-  },
-  {
-    key: '15',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sydney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
-  },
-  {
-    key: '16',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
-  },
-  {
-    key: '17',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
-  },
-  {
-    key: '18',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sydney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
-  },
-];
+const format_date = (datetime: string): string => {
+  return new Date(datetime).toLocaleDateString("ru-RU")
+}
 
-export const SessionTable: React.FC = () => <Table columns={columns} dataSource={data} />;
+  useEffect(() => {
+    axios.get('http://localhost:8000/session/sessions', { withCredentials: true }).then(r => {
+      setSessions(r.data)
+    })
+  }, [])
+  
+return (
+  <>
+    {sessions.length > 0
+      ?<Table columns={columns} dataSource={sessions} />
+      : <>Пока сеансов нет</>
+    }
+  </>
+)}

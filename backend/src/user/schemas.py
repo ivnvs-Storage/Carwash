@@ -2,11 +2,7 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr
 
 
-class TUser(BaseModel):
-    id: int
+class TInfoOutput(BaseModel):
     email: EmailStr
-    hash_password: str
     fullname: str
-    enable: bool
-    car_ids: Optional[list[int]]
-    administrator: bool
+    car_numbers: Optional[list[str]]

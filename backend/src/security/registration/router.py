@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter
 
 from backend.src.security.registration.shemas import TRegistrationInput
 from backend.db.user.dao import UserDAO
 from backend.src.security.dependencies import get_password_hash
-from backend.src.user.schemas import TUser
+from backend.db.types import TUser
 
 from backend.db.carwash.dao import CarwashDAO
 
@@ -20,12 +20,10 @@ async def registration(user_data: TRegistrationInput) -> bool:
     if existing_user:
         return False
     hash_password = get_password_hash(user_data.password)
-    new_user = await UserDAO.add({
+    new_user = await UserDAO.add_user({
         'email':user_data.email, 
         'hash_password': hash_password,
-        'fullname': user_data.fullname, 
-        'enable': False,
-        'administrator': False
+        'fullname': user_data.fullname,
         })
     if not new_user:
         return False

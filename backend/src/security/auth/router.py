@@ -1,5 +1,6 @@
+from typing import Optional
 from fastapi import APIRouter, Depends, Response
-from backend.src.user.schemas import TUser
+from backend.db.types import TUser
 from backend.src.security.auth.schemas import TAuth
 from backend.src.security.auth.authentication import Authentification
 from backend.src.security.auth.authorization import Authorization
@@ -18,15 +19,21 @@ async def login_user(response: Response, user_data: TAuth) -> dict:
     user = await Authentification.authenticate_user(user_data.email, user_data.password)
     access_token = Authentification.create_access_token({"sub": str(user.id)})
     if Authorization.is_enable_user(user):
-        response.set_cookie("carwash_access_token", access_token, httponly=True)
+        response.set_cookie(
+            key="carwash_access_token", 
+            value=access_token, 
+            httponly=True, 
+            )
     return {"access_token": access_token}
 
 
 @router_auth.get("/me")
-async def read_user_me(user_id: int = Depends(get_user_id_from_token)) -> TUser:
+async def read_user_me(user_id: int = Depends(get_user_id_from_token)) -> Optional[TUser]:
+    if user_id is None:
+        return None
     user = await UserDAO.find_one_or_none(id=user_id)
     return user
 
-@router_auth.post("/logout")
+@router_auth.get("/logout")
 async def logout_user(response: Response):
     response.delete_cookie("carwash_access_token")

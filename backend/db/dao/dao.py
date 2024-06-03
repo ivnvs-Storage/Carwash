@@ -1,6 +1,5 @@
 from sqlalchemy import delete, insert, select
 from sqlalchemy.exc import SQLAlchemyError
-
 from backend.db.database import async_session_maker
 
 
@@ -22,19 +21,18 @@ class BaseDAO:
             return result.mappings().all()
     
     @classmethod
-    async def add(cls, data={}):
+    async def add(cls, **data):
         try:
-            query = insert(cls.model).values(data).returning(cls.model)
             async with async_session_maker() as session:
+                query = insert(cls.model).values(**data)
                 result = await session.execute(query)
                 await session.commit()
-                return result.mappings().first()
         except (SQLAlchemyError, Exception):
             return None
 
     @classmethod
-    async def delete(cls, filter_by={}):
+    async def delete(cls, id):
         async with async_session_maker() as session:
-            query = delete(cls.model).filter_by(filter_by)
+            query = delete(cls.model).where(cls.model.id == id)
             await session.execute(query)
             await session.commit()

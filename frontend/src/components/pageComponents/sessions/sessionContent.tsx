@@ -8,7 +8,8 @@ const { Content } = Layout
 export const SessionContent: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+  } = theme.useToken()
+
 
   return (
       <Content style={{ padding: '0 48px' }}>

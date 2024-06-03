@@ -1,26 +1,75 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout, Menu } from 'antd';
 import { changePage } from '../../routes/routes'
+import axios from 'axios';
 
-const { Header } = Layout;
+const { Header } = Layout
 
-const items = [
-    {
-        key: 1,
-        label: "Сеансы",
-    },
-    {
-        key: 2,
-        label: "Забронировать",
-    },
-    {
-        key: 3,
-        label: "Мои Данные",
-    },
-]
+interface TTab {
+  key: number,
+  label: string
+}
 
 
 export const PageHeader: React.FC = () => {
+
+  const [items, setItems] = useState<TTab[]>([])
+
+  useEffect(() => {
+    axios.get('http://localhost:8000/auth/me', { withCredentials: true }).then(r => {
+      if (r.data) {
+        r.data.administrator 
+        ? setItems([{
+            key: 1,
+            label: "Сеансы",
+            },
+            {
+              key: 2,
+              label: "Забронировать",
+            },
+            {
+              key: 3,
+              label: "Мои Данные",
+            },
+            {
+              key: 4,
+              label: "Отчеты",
+            },
+            {
+              key: 5,
+              label: "Подтвердить",
+            },
+            {
+              key: 6,
+              label: "Выставить счет",
+            },
+            {
+              key: 7,
+              label: "Выйти",
+            },
+          ])
+        : setItems([{
+              key: 1,
+              label: "Сеансы",
+            },
+            {
+              key: 2,
+              label: "Забронировать",
+            },
+            {
+              key: 3,
+              label: "Мои Данные",
+            },
+            {
+              key: 7,
+              label: "Выйти",
+            },
+          ])
+      } else {
+        window.location.assign('http://localhost:5173/login')
+      }
+    })
+  }, [])
 
   return (
       <Header
