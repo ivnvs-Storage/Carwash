@@ -1,13 +1,6 @@
-from typing import TYPE_CHECKING, Optional
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship, mapped_column, Mapped
-
+from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy import ARRAY, Column, Integer
 from backend.db.database import Base
-
-# if TYPE_CHECKING:
-#     # Убирает предупреждения отсутствия импорта и неприятные подчеркивания в 
-#     # PyCharm и VSCode
-#     from bookings.models import Bookings
 
 
 class User(Base):
@@ -18,7 +11,6 @@ class User(Base):
     hash_password: Mapped[str]
     fullname: Mapped[str]
     enable: Mapped[bool]
-    car_ids: Mapped[Optional[int]]
+    car_ids = Column(ARRAY(Integer))
     administrator: Mapped[bool]
-
-    # bookings: Mapped[list["Bookings"]] = relationship(back_populates="user")
+    

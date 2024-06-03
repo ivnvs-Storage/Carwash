@@ -1,5 +1,6 @@
-import React from 'react';
-import { Button, Form, Input } from 'antd';
+import React, { useEffect, useState } from 'react'
+import { Button, Form, Input } from 'antd'
+import axios from 'axios'
 
 const formItemLayout = {
   labelCol: {
@@ -9,52 +10,82 @@ const formItemLayout = {
   wrapperCol: {
     xs: { span: 24 },
     sm: { span: 16 },
-  },
-};
+  }
+}
 
-const onFinish = (fieldsValue: any) => {
-  console.log('Alex', fieldsValue);
-};
-
-const data: any = [
-    {
-        id: 1,
-        number: 'A322AA777'
-    },
-    {
-        id: 2,
-        number: 'A322AA778'
-    },
-]
+interface TUserInfo {
+  email: string
+  fullname: string
+  car_numbers: string[]
+}
 
 export const InfoForm: React.FC = () => {
 
+  const [userData, setUserData] = useState<TUserInfo|null>(null)
+
+  const onFinish = (fieldsValue: any) => {
+    axios.post('http://localhost:8000/user/update', fieldsValue, { withCredentials: true })
+  .then(function (response) {
+    console.log(response)
+  })
+  .catch(function (error) {
+    console.log(error)
+  })
+  }
+
+  const addCar = () => {
+    if (userData)
+      setUserData({...userData, car_numbers: [...userData.car_numbers, '']})
+  }
+
+  useEffect(() => {
+    axios.get('http://localhost:8000/user/info', { withCredentials: true }).then(r => {
+      setUserData(r.data)
+    })
+  }, [])
+
     return (
+      <>
+      {userData ? 
   <Form
     name="time_related_controls"
     {...formItemLayout}
     onFinish={onFinish}
     style={{ maxWidth: 600 }}
   >
-    <Form.Item name="name" label="Имя фамилия:">
-          <Input defaultValue="Алексей Иванов"/>
+    <Form.Item label="Имя фамилия:" name="fullname">
+          <Input defaultValue={userData?.fullname}/>
     </Form.Item>
-    <Form.Item label="Почта:" name="mail">
-          <Input defaultValue="Alex@mail.ru"/>
+    <Form.Item label="Почта:" name="email">
+          <Input defaultValue={userData?.email}/>
     </Form.Item>
-    {data.map((car: any) => {
+    {userData?.car_numbers?.map((number: string, index: number) => {
         return (
         <>
-            <Form.Item label="Номер автомобиля:" name={car.id}>
-                <Input defaultValue={car.number}/>
+        {number 
+        ? <Form.Item label="Номер автомобиля:" name={`car_${number}`}>
+            <Input defaultValue={number}/>
+          </Form.Item>
+          : <Form.Item label="Номер автомобиля:" name={`new_${index}`}>
+              <Input defaultValue={number}/>
             </Form.Item>
+        }
+            
         </>
         )
     })}
+    <Form.Item wrapperCol={{ xs: { span: 4, offset: 0 }, sm: { span: 4, offset: 8 } }}>
+      <Button type="primary" onClick={addCar}>
+        Добавить автомобиль
+      </Button>
+    </Form.Item>
     <Form.Item wrapperCol={{ xs: { span: 24, offset: 0 }, sm: { span: 16, offset: 8 } }}>
       <Button type="primary" htmlType="submit">
         Изменить
       </Button>
     </Form.Item>
   </Form>
+  : <></>
+}
+  </>
 )}

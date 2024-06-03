@@ -8,5 +8,6 @@ class Booking(Base):
     __tablename__ = "booking"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    start_time: Mapped[datetime]
-    end_time: Mapped[datetime]
+    approved: Mapped[bool]
+    user_id: Mapped[int]
+    datetime: Mapped[datetime]

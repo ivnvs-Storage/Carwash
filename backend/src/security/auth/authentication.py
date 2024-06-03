@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from jose import jwt
 from pydantic import EmailStr
 
-from backend.src.user.schemas import TUser
+from backend.db.types import TUser
 from backend.src.security.dependencies import verify_password
 from backend.db.user.dao import UserDAO
 from backend.config import settings

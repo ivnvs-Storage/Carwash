@@ -1,9 +1,13 @@
 from fastapi import FastAPI
-from jose import jwt
 from fastapi.middleware.cors import CORSMiddleware
-from backend.src.exceptions import UserIsNotPresentException
 from backend.src.security.auth.router import router_auth
 from backend.src.security.registration.router import router_registration
+from backend.src.session.router import router_session
+from backend.src.user.router import router_user
+from backend.src.report.router import router_report
+from backend.src.confirm.router import router_confirm
+from backend.src.booking.router import router_booking
+from backend.src.bill.router import router_bill
 
 
 app = FastAPI()
@@ -11,28 +15,30 @@ app = FastAPI()
 
 app.include_router(router_auth)
 app.include_router(router_registration)
-# # app.include_router(router_hotels)  # Необходимо реализовать самостоятельно
-# app.include_router(router_bookings)
-
-# app.include_router(router_images)
-# app.include_router(router_prometheus)
+app.include_router(router_session)
+app.include_router(router_user)
+app.include_router(router_report)
+app.include_router(router_confirm)
+app.include_router(router_booking)
+app.include_router(router_bill)
 
 origins = [
-    # 3000 - порт, на котором работает фронтенд на React.js 
-    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://localhost:5173",
+    "https://127.0.0.1:5173",
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
-    allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", 
-                   "Access-Control-Allow-Origin", "Authorization"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
 @app.get("/test")
-async def logout_user():
-    raise UserIsNotPresentException
+async def logout_user() -> bool:
+    return True
 
